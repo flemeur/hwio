@@ -4,7 +4,6 @@ package hwio
 // same uninitialised state.
 
 import (
-	"fmt"
 	"testing"
 )
 
@@ -33,7 +32,7 @@ func TestGetPin(t *testing.T) {
 
 	p1, e := GetPin("P1")
 	if e != nil {
-		t.Error(fmt.Sprintf("GetPin('P1') should not return an error, returned '%s'", e))
+		t.Errorf("GetPin('P1') should not return an error, returned '%v'", e)
 	}
 	if p1 != 0 {
 		t.Error("GetPin('P0') should return 0")
@@ -42,19 +41,19 @@ func TestGetPin(t *testing.T) {
 	// test for altenate name of same pin
 	p1a, e := GetPin("gpio1")
 	if e != nil {
-		t.Error(fmt.Sprintf("GetPin('gpio1') should not return an error, returned '%s'"), e)
+		t.Errorf("GetPin('gpio1') should not return an error, returned '%v'", e)
 	}
 	if p1a != p1 {
-		t.Error(fmt.Sprintf("Expected P1 and gpio1 to be the same pin"))
+		t.Error("Expected P1 and gpio1 to be the same pin")
 	}
 
 	// test case insensitivity
 	p1b, e := GetPin("GpIo1")
 	if e != nil {
-		t.Error(fmt.Sprintf("GetPin('GpIo1') should not return an error, returned '%s'"), e)
+		t.Errorf("GetPin('GpIo1') should not return an error, returned '%v'", e)
 	}
 	if p1b != p1 {
-		t.Error(fmt.Sprintf("Expected P1 and GpIo1 to be the same pin"))
+		t.Error("Expected P1 and GpIo1 to be the same pin")
 	}
 
 	_, e = GetPin("P99")
@@ -71,7 +70,7 @@ func TestPinMode(t *testing.T) {
 	// Set pin 0 to input. We expect no error as it's GPIO
 	e := PinMode(0, INPUT)
 	if e != nil {
-		t.Error(fmt.Sprintf("GetPin('P1') should not return an error, returned '%s'", e))
+		t.Errorf("GetPin('P1') should not return an error, returned '%v'", e)
 	}
 	m := gpio.MockGetPinMode(0)
 	if m != INPUT {
@@ -122,7 +121,7 @@ func TestDigitalRead(t *testing.T) {
 func getMockGPIO(t *testing.T) *testGPIOModule {
 	g, e := GetModule("gpio")
 	if e != nil {
-		t.Error(fmt.Sprintf("Fetching gpio module should not return an error, returned %s", e))
+		t.Errorf("Fetching gpio module should not return an error, returned %v", e)
 	}
 	if g == nil {
 		t.Error("Could not get 'gpio' module")
@@ -140,21 +139,21 @@ func writePinAndCheck(t *testing.T, pin Pin, value int, driver *TestDriver) {
 		t.Error("DigitalRead returned an error")
 	}
 	if v != value {
-		t.Error(fmt.Sprintf("After writing %d to driver, DigitalRead method should return this value", value))
+		t.Errorf("After writing %d to driver, DigitalRead method should return this value", value)
 	}
 }
 
 func TestBitManipulation(t *testing.T) {
 	v := UInt16FromUInt8(0x45, 0x65)
 	if v != 0x4565 {
-		t.Error(fmt.Sprintf("UInt16FromUInt8 does not work correctly, expected 0x4565, got %04x", v))
+		t.Errorf("UInt16FromUInt8 does not work correctly, expected 0x4565, got %04x", v)
 	}
 }
 
 func TestCpuInfo(t *testing.T) {
 	s := CpuInfo(0, "processor")
 	if s != "0" {
-		t.Error(fmt.Sprintf("Expected 'processor' property of processor 0 to be 0 from CpuInfo, got '%s'", s))
+		t.Errorf("Expected 'processor' property of processor 0 to be 0 from CpuInfo, got '%s'", s)
 	}
 }
 
@@ -163,24 +162,24 @@ func TestAnalogRead(t *testing.T) {
 
 	ap1, e := GetPin("p11")
 	if e != nil {
-		t.Error(fmt.Sprintf("GetPin('p11') should not return an error, returned '%s'", e))
+		t.Errorf("GetPin('p11') should not return an error, returned '%v'", e)
 	}
 
 	v, e := AnalogRead(ap1)
 	if e != nil {
-		t.Error(fmt.Sprintf("After reading from pin %d, got an unexpected error: %s", ap1, e))
+		t.Errorf("After reading from pin %d, got an unexpected error: %v", ap1, e)
 	}
 	if v != 1 {
-		t.Error(fmt.Sprintf("After reading from pin %d, did not get the expected value 1, got %d", ap1, v))
+		t.Errorf("After reading from pin %d, did not get the expected value 1, got %d", ap1, v)
 	}
 
 	ap2, _ := GetPin("p12")
 	v, _ = AnalogRead(ap2)
 	if e != nil {
-		t.Error(fmt.Sprintf("After reading from pin %d, got an unexpected error: %s", ap2, e))
+		t.Errorf("After reading from pin %d, got an unexpected error: %s", ap2, e)
 	}
 	if v != 1000 {
-		t.Error(fmt.Sprintf("After reading from pin %d, did not get the expected value 1000, got %d", ap2, v))
+		t.Errorf("After reading from pin %d, did not get the expected value 1000, got %d", ap2, v)
 	}
 }
 
